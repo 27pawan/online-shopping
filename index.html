@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopEasy Online Store</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f5f5f5;
+    color: #222;
+}
+
+header {
+    background: #172337;
+    color: white;
+    padding: 18px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    color: #ffb300;
+    font-size: 27px;
+    font-weight: bold;
+}
+
+nav {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+nav button {
+    background: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.login-btn {
+    background: #ff9800;
+    padding: 10px 18px;
+    border-radius: 5px;
+    color: white;
+    border: none;
+}
+
+.hero {
+    background: linear-gradient(90deg, #172337, #405d80);
+    color: white;
+    padding: 65px 20px;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    margin-bottom: 20px;
+}
+
+.search {
+    padding: 12px;
+    width: min(90%, 400px);
+    border: none;
+    border-radius: 5px;
+}
+
+.section-title {
+    text-align: center;
+    margin: 30px 0 10px;
+}
+
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 22px;
+    padding: 25px 5%;
+}
+
+.product {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 9px #ddd;
+}
+
+.product img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 7px;
+}
+
+.product h3 {
+    margin: 12px 0;
+}
+
+.price {
+    color: #138b43;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px;
+}
+
+.primary {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 5px;
+}
+
+.primary:hover {
+    background: #e68900;
+}
+
+.panel {
+    background: white;
+    margin: 25px auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 650px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px #ddd;
+}
+
+.panel h2 {
+    margin-bottom: 20px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+.cart-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.remove {
+    color: red;
+    border: none;
+    background: none;
+}
+
+.payment-option {
+    display: block;
+    padding: 12px;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    border-radius: 6px;
+}
+
+footer {
+    background: #172337;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 35px;
+}
+
+.status {
+    color: green;
+    font-weight: bold;
+    margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">ShopEasy 🛍️</div>
+    <nav>
+        <button onclick="showHome()">Home</button>
+        <button onclick="showCart()">🛒 Cart (<span id="count">0</span>)</button>
+        <button onclick="showLogin()" id="accountBtn">Login</button>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <h1>Welcome to ShopEasy</h1>
+    <p>Discover Amazing Products at Best Prices!</p>
+    <input class="search" id="search"
+        placeholder="Search products..."
+        oninput="displayProducts()">
+</section>
+
+<h2 class="section-title">Our Products</h2>
+<div class="products" id="products"></div>
+
+<!-- LOGIN -->
+<section class="panel hidden" id="login">
+    <h2>Login to Your Account</h2>
+    <form onsubmit="loginUser(event)">
+        <label>Email Address</label>
+        <input class="form-input" type="email"
+            id="loginEmail" required>
+
+        <label>Password</label>
+        <input class="form-input" type="password"
+            id="loginPassword" required>
+
+        <button class="primary">Login</button>
+    </form>
+    <p>Don't have an account?
+        <a href="#" onclick="showSignup()">Sign Up</a>
+    </p>
+    <p id="loginMessage"></p>
+</section>
+
+<!-- SIGNUP -->
+<section class="panel hidden" id="signup">
+    <h2>Create New Account</h2>
+    <form onsubmit="signupUser(event)">
+        <label>Full Name</label>
+        <input class="form-input" id="signupName" required>
+
+        <label>Email</label>
+        <input class="form-input" type="email"
+            id="signupEmail" required>
+
+        <label>Password</label>
+        <input class="form-input" type="password"
+            id="signupPassword" minlength="8" required>
+
+        <button class="primary">Create Account</button>
+    </form>
+    <p>Already registered?
+        <a href="#" onclick="showLogin()">Login</a>
+    </p>
+    <p id="signupMessage"></p>
+</section>
+
+<!-- CART -->
+<section class="panel hidden" id="cart">
+    <h2>🛒 Your Shopping Cart</h2>
+    <div id="cartItems">Your cart is empty.</div>
+    <h3 style="margin:20px 0">
+        Total: ₹<span id="total">0</span>
+    </h3>
+    <button class="primary" onclick="checkout()">
+        Proceed to Checkout
+    </button>
+</section>
+
+<!-- CHECKOUT -->
+<section class="panel hidden" id="checkout">
+    <h2>Secure Checkout</h2>
+
+    <h3>Delivery Details</h3>
+    <input class="form-input" id="customerName"
+        placeholder="Full Name" required>
+    <input class="form-input" id="customerPhone"
+        placeholder="Mobile Number" type="tel" required>
+    <textarea class="form-input" id="address"
+        placeholder="Full Delivery Address" required></textarea>
+
+    <h3>Select Payment Method</h3>
+
+    <label class="payment-option">
+        <input type="radio" name="payment"
+            value="UPI" checked>
+        📱 UPI Payment
+    </label>
+
+    <label class="payment-option">
+        <input type="radio" name="payment"
+            value="Debit Card">
+        💳 Debit Card
+    </label>
+
+    <label class="payment-option">
+        <input type="radio" name="payment"
+            value="Credit Card">
+        💳 Credit Card
+    </label>
+
+    <label class="payment-option">
+        <input type="radio" name="payment"
+            value="Net Banking">
+        🏦 Net Banking
+    </label>
+
+    <label class="payment-option">
+        <input type="radio" name="payment"
+            value="Cash on Delivery">
+        💵 Cash on Delivery
+    </label>
+
+    <h3 style="margin:20px 0">
+        Order Total: ₹<span id="checkoutTotal">0</span>
+    </h3>
+
+    <button class="primary" onclick="placeOrder()">
+        Place Order
+    </button>
+</section>
+
+<!-- ORDER CONFIRMATION -->
+<section class="panel hidden" id="confirmation">
+    <h2>🎉 Order Placed!</h2>
+    <p>Thank you for shopping with ShopEasy.</p>
+    <p id="orderDetails"></p>
+    <p class="status" id="orderStatus"></p>
+    <button class="primary" onclick="showHome()">
+        Continue Shopping
+    </button>
+</section>
+
+<footer>
+    <h3>ShopEasy Online Shopping</h3>
+    <p>Quality Products | Best Prices | Happy Shopping</p>
+    <p>© 2026 ShopEasy. All Rights Reserved.</p>
+</footer>
+
+<script>
+
+// PRODUCT DATABASE
+const products = [
+    {
+        name: "Smartphone",
+        price: 15000,
+        image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500"
+    },
+    {
+        name: "Headphones",
+        price: 1999,
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500"
+    },
+    {
+        name: "Smart Watch",
+        price: 2999,
+        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500"
+    },
+    {
+        name: "Laptop",
+        price: 55000,
+        image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500"
+    },
+    {
+        name: "Camera",
+        price: 25000,
+        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500"
+    },
+    {
+        name: "Shoes",
+        price: 2499,
+        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"
+    }
+];
+
+let cart = [];
+let currentUser = null;
+
+// DISPLAY PRODUCTS
+function displayProducts() {
+    const search = document.getElementById("search")
+        .value.toLowerCase();
+
+    const filtered = products.filter(p =>
+        p.name.toLowerCase().includes(search)
+    );
+
+    document.getElementById("products").innerHTML =
+        filtered.map(p => `
+        <div class="product">
+            <img src="${p.image}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p class="price">₹${p.price.toLocaleString("en-IN")}</p>
+            <button class="primary"
+                onclick="addToCart('${p.name}')">
+                Add to Cart
+            </button>
+        </div>
+    `).join("");
+}
+
+// CART FUNCTIONS
+function addToCart(name) {
+    const product = products.find(p => p.name === name);
+    cart.push(product);
+    updateCart();
+    alert("Product added to cart!");
+}
+
+function removeItem(index) {
+    cart.splice(index, 1);
+    updateCart();
+}
+
+function updateCart() {
+    document.getElementById("count").innerText = cart.length;
+
+    document.getElementById("cartItems").innerHTML =
+        cart.length === 0 ? "Your cart is empty." :
+        cart.map((item, index) => `
+        <div class="cart-item">
+            <span>${item.name} - ₹${item.price}</span>
+            <button class="remove"
+                onclick="removeItem(${index})">
+                Remove
+            </button>
+        </div>
+    `).join("");
+
+    const total = cart.reduce((sum, p) => sum + p.price, 0);
+    document.getElementById("total").innerText =
+        total.toLocaleString("en-IN");
+}
+
+// PAGE NAVIGATION
+function hideAll() {
+    ["home", "products", "login", "signup",
+     "cart", "checkout", "confirmation"]
+    .forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+    });
+}
+
+function showHome() {
+    hideAll();
+    document.getElementById("home").classList.remove("hidden");
+    document.getElementById("products").classList.remove("hidden");
+}
+
+function showLogin() {
+    hideAll();
+    document.getElementById("login").classList.remove("hidden");
+}
+
+function showSignup() {
+    hideAll();
+    document.getElementById("signup").classList.remove("hidden");
+}
+
+function showCart() {
+    hideAll();
+    document.getElementById("cart").classList.remove("hidden");
+}
+
+function checkout() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    if (!currentUser) {
+        alert("Please login before checkout.");
+        showLogin();
+        return;
+    }
+
+    hideAll();
+    document.getElementById("checkout").classList.remove("hidden");
+    document.getElementById("checkoutTotal").innerText =
+        cart.reduce((sum, p) => sum + p.price, 0)
+        .toLocaleString("en-IN");
+
+    document.getElementById("customerName").value =
+        currentUser.name;
+}
+
+// DEMO ACCOUNT REGISTRATION
+function signupUser(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
+
+    let users = JSON.parse(localStorage.getItem("demoUsers") || "[]");
+
+    if (users.some(u => u.email === email)) {
+        document.getElementById("signupMessage").innerText =
+            "Email already registered!";
+        return;
+    }
+
+    users.push({name, email, password});
+    localStorage.setItem("demoUsers", JSON.stringify(users));
+
+    alert("Account created! Please login.");
+    showLogin();
+}
+
+// DEMO LOGIN
+function loginUser(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const users = JSON.parse(localStorage.getItem("demoUsers") || "[]");
+
+    const user = users.find(u =>
+        u.email === email && u.password === password
+    );
+
+    if (!user) {
+        document.getElementById("loginMessage").innerText =
+            "Invalid email or password!";
+        return;
+    }
+
+    currentUser = user;
+    document.getElementById("accountBtn").innerText = user.name;
+
+    alert("Login successful!");
+    showHome();
+}
+
+// PLACE ORDER - DEMO ONLY
+function placeOrder() {
+    const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
+    const address = document.getElementById("address").value.trim();
+
+    if (!name || !phone || !address) {
+        alert("Please fill all delivery details.");
+        return;
+    }
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+        alert("Enter a valid 10-digit mobile number.");
+        return;
+    }
+
+    const payment = document.querySelector(
+        'input[name="payment"]:checked'
+    ).value;
+
+    const total = cart.reduce((sum, p) => sum + p.price, 0);
+
+    hideAll();
+    document.getElementById("confirmation").classList.remove("hidden");
+
+    document.getElementById("orderDetails").innerText =
+        "Customer: " + name +
+        " | Amount: ₹" + total +
+        " | Payment: " + payment;
+
+    document.getElementById("orderStatus").innerText =
+        payment === "Cash on Delivery"
+        ? "Demo order created. Payment due on delivery."
+        : "Demo order created. No actual payment has been collected.";
+
+    cart = [];
+    updateCart();
+}
+
+displayProducts();
+</script>
+
+</body>
+</html>
